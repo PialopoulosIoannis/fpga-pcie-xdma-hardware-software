@@ -56,5 +56,28 @@ By loading the drivers in, some files will be generated: Some of them are the c2
 The applications which we will use to write and read are basically C-scripts. 
 All the scripts that I have created are in the folder under the name `script-application`
 Explanation for every script:
+`Custom_Reading.c` : A file that outputs what an address contains. You can choose whichever address you want.
+`Reading.c` : A file that outputs what a certain address contains. Let's say address X.
+`01Script_for_write_and_read.c` : This file just writes and reads from address X.
+`02Script_for_write_and_read.c` : This files writes and reads from address X, something diferent from the above file. This is made to showcase the problem that data written by one .exe execution can be overwritten by another execution without any warning.
+My fix:
+We will map every address available in a map that has false and true values. Everytime we want to write, we just check the value in the table.
+`Array_editing.c` : Script to create the txt file which will be the table with false and true values. It creates a file that contains 16384 addresses. Each line is an address. This is because in Vivado, in the address editor window we selected that the first and second memory block will have addresses respectively going from 
+* 0xC000_0000 up to 0xC000_1FFF
+* 0xC000_2000 up to 0xC000_3000
+In total 16384 addresses.
+`Global_array` : This is the txt file that will be created
+`Writing_when_mem_available.c` : This is the file that writes only when memory available. Specifically in the beggining, it asks you to write an address in hex. The address that you input must:
+* Be inside the range of available memory
+* Must not be written beforehand by another execution
+Then and only then, the script will write something in this address that is defined inside the file. (A pattern of numbers. You can change it of course)
+
+## Available Enhancements
+The way the `Global_array` txt file is used is not efficient. In order to update it in case the address is valid:
+1. We copy it in a temp file line by line
+2. When we reach the line of the address where we are writting we upadate it to False
+3. We continue the copying of the file
+4. We delete the global array file and we reanme the temp file as global array
+This is done because True and False have different number of letters and we can't delete True and add False because the last lttere e will go to the next line. This issue can be avoided by replacing "True " and "False" by 'T' and 'F' or just '1' and '0'. Maybe there exists some other lines of code that can be used to replace "True" with "False" and not destroy the arrangement of the txt file.
 
 
